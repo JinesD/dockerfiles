@@ -1,22 +1,11 @@
-# Base image to use, this must be set as the first line
-FROM php:5.6.40-apache
+FROM php:7.2.15-apache
 
-# enviroment variables
-# defined run user and some working directory
 ENV APACHE_RUN_USER=www-data \
 APACHE_RUN_GROUP=www-data \
 APACHE_LOG_DIR=/var/log/apache2 \
 APACHE_LOCK_DIR=/var/lock/apache2 \
 APACHE_PID_FILE=/var/run/apache2.pid
 
-# RUN echo "deb http://ftp.es.debian.org/debian stable main contrib non-free" >> /etc/apt/sources.list \
-# && echo "deb-src http://ftp.es.debian.org/debian stable main contrib non-free" >> /etc/apt/sources.list \
-# && echo "deb http://ftp.debian.org/debian/ wheezy-updates main contrib non-free" >> /etc/apt/sources.list \
-# && echo "deb-src http://ftp.debian.org/debian/ wheezy-updates main contrib non-free" >> /etc/apt/sources.list \
-# && echo "deb http://security.debian.org/ wheezy/updates main contrib non-free" >> /etc/apt/sources.list \
-# && echo "deb-src http://security.debian.org/ wheezy/updates main contrib non-free" >> /etc/apt/sources.list
-
-# update apt-get cache and install some extensions for PHP
 RUN apt-get update && apt-get install -y --no-install-recommends \
 libfreetype6-dev \
 libjpeg62-turbo-dev \
@@ -40,7 +29,7 @@ openssl \
 && docker-php-ext-configure intl \
 && docker-php-ext-install -j$(nproc) iconv \
 && docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ \
-&& docker-php-ext-install -j$(nproc) mcrypt gd \
+&& docker-php-ext-install -j$(nproc) gd \
 && docker-php-ext-configure ldap --with-libdir=lib/x86_64-linux-gnu/ \
 && docker-php-ext-install ldap \
 && docker-php-ext-install gettext \
@@ -54,12 +43,9 @@ openssl \
 && apt-get clean \
 && a2enmod rewrite
 
-# install extensions
 COPY extras/redis-4.2.0.tgz /tmp/redis-4.2.0.tgz
-COPY extras/gearman-1.1.2.tgz /tmp/gearman-1.1.2.tgz
-RUN pecl install /tmp/redis-4.2.0.tgz /tmp/gearman-1.1.2.tgz \
-&& docker-php-ext-enable redis gearman \
-&& rm /tmp/redis-4.2.0.tgz /tmp/gearman-1.1.2.tgz
+RUN pecl install /tmp/redis-4.2.0.tgz \
+&& docker-php-ext-enable redis  \
+&& rm /tmp/redis-4.2.0.tgz
 
-# exposed work port
 EXPOSE 80
