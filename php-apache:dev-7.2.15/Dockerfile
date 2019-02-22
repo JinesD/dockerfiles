@@ -26,7 +26,20 @@ zlib1g-dev \
 libgearman-dev \
 libgearman-client-perl \
 openssl \
-&& docker-php-ext-configure intl \
+git
+
+RUN cd /home \
+&& git clone https://github.com/wcgallego/pecl-gearman.git \
+&& cd pecl-gearman \
+&& phpize \
+&& ./configure \
+&& make \
+&& make install \
+&& echo 'extension=gearman.so' > /usr/local/etc/php/conf.d/docker-php-ext-gearman.ini \
+&& cd .. \
+&& rm -rf pecl-gearman
+
+RUN docker-php-ext-configure intl \
 && docker-php-ext-install -j$(nproc) iconv \
 && docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ \
 && docker-php-ext-install -j$(nproc) gd \
