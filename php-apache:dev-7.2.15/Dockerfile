@@ -26,7 +26,8 @@ zlib1g-dev \
 libgearman-dev \
 libgearman-client-perl \
 openssl \
-git
+git \
+vim
 
 RUN cd /home \
 && git clone https://github.com/wcgallego/pecl-gearman.git \
@@ -46,7 +47,7 @@ RUN docker-php-ext-configure intl \
 && docker-php-ext-configure ldap --with-libdir=lib/x86_64-linux-gnu/ \
 && docker-php-ext-install ldap \
 && docker-php-ext-install gettext \
-&& docker-php-ext-install pdo pdo_mysql \
+&& docker-php-ext-install pdo pdo_mysql mysqli \
 && docker-php-ext-install zip \
 && docker-php-ext-install soap \
 && docker-php-ext-install opcache \
