@@ -17,13 +17,10 @@ RUN cd /tmp \
 && make \
 && make install
 
-RUN mkdir /go/src/gitlab2.rongcloud.net \
-&& go get github.com/tools/godep \
+RUN go get github.com/tools/godep \
 && npm config set registry https://registry.npm.taobao.org \
 && apt-get autoremove -y \
 && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/doc/* \
 && apt-get clean
-
-WORKDIR /go/src/gitlab2.rongcloud.net
 
 EXPOSE 80
